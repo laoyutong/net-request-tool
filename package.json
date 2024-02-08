@@ -5,11 +5,12 @@
   "description": "update net request content",
   "author": "laoyutong",
   "scripts": {
-    "dev": "plasmo dev",
+    "dev": "plasmo dev --verbose",
     "build": "plasmo build",
     "package": "plasmo package"
   },
   "dependencies": {
+    "antd": "^5.14.0",
     "plasmo": "0.84.2",
     "react": "18.2.0",
     "react-dom": "18.2.0"
@@ -21,7 +22,11 @@
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
+    "autoprefixer": "^10.4.17",
+    "lightningcss-darwin-arm64": "^1.23.0",
+    "postcss": "^8.4.35",
     "prettier": "3.2.4",
+    "tailwindcss": "^3.4.1",
     "typescript": "5.3.3"
   },
   "manifest": {
