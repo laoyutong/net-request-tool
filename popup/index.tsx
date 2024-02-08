@@ -2,15 +2,18 @@ import { useMount, useUpdateEffect } from "ahooks"
 import icon from "data-base64:~assets/icon.png"
 import React, { useState } from "react"
 
+import "@icon-park/react/styles/index.css"
+
 import { Storage } from "@plasmohq/storage"
 
 import { ConfigContent, Configuration } from "~types"
 
 import "./style.css"
 
+import { Empty, message } from "antd"
 import { produce } from "immer"
 
-import { DEFAULT_CONFIGURATION, STORAGE_KEY } from "~config"
+import { DEFAULT_CONFIGURATION, getDefaultConfig, STORAGE_KEY } from "~config"
 
 import { ConfigForm } from "./components/ConfigForm"
 import { Navigation } from "./components/Navigation"
@@ -38,6 +41,15 @@ const Popup = () => {
     </div>
   )
 
+  const removeConfig = () => {
+    setConfiguration((pre) =>
+      produce(pre, (draft) => {
+        draft.configs.splice(draft.configIdx, 1)
+        draft.configIdx = 0
+      })
+    )
+  }
+
   const updateConfig = (configContent: ConfigContent) => {
     setConfiguration((pre) =>
       produce(pre, (draft) => {
@@ -59,12 +71,18 @@ const Popup = () => {
         />
         {activeConfig ? (
           <div className="relative flex-grow">
-            <ConfigForm config={activeConfig} onChange={updateConfig} />
+            <ConfigForm
+              config={activeConfig}
+              onChange={updateConfig}
+              remove={removeConfig}
+            />
             {!configuration.isOpen ? (
               <div className="absolute top-0 left-0 w-full h-full opacity-50 bg-black" />
             ) : null}
           </div>
-        ) : null}
+        ) : (
+          <Empty style={{ width: "100%" }} />
+        )}
       </div>
     )
   }

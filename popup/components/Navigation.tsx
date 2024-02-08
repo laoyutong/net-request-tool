@@ -65,7 +65,7 @@ export const Navigation = ({
           produce(pre, (draft) => {
             const configLength = draft.configs.length
 
-            draft.configs.push(getDefaultConfig((configLength + 1).toString()))
+            draft.configs.push(getDefaultConfig(configLength + 1))
             draft.configIdx = configLength
           })
         )

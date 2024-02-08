@@ -5,9 +5,9 @@ export const STORAGE_KEY = {
 }
 
 export const getDefaultConfig = (
-  name: string
+  index: number
 ): Configuration["configs"][number] => ({
-  name,
+  name: `${index}-Profile`,
   requestHeaders: [
     {
       key: "",
@@ -19,5 +19,5 @@ export const getDefaultConfig = (
 export const DEFAULT_CONFIGURATION: Configuration = {
   isOpen: true,
   configIdx: 0,
-  configs: [getDefaultConfig("1")]
+  configs: [getDefaultConfig(1)]
 }
