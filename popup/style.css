@@ -1,2 +1,20 @@
 @tailwind components;
 @tailwind utilities;
+
+body {
+  margin: 0;
+}
+
+@layer utilities {
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+}
+
+.flex-shrink-container > * {
+  flex-shrink: 0;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
