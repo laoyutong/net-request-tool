@@ -10,10 +10,10 @@ import { ConfigContent, Configuration } from "~types"
 
 import "./style.css"
 
-import { Empty, message } from "antd"
+import { Empty } from "antd"
 import { produce } from "immer"
 
-import { DEFAULT_CONFIGURATION, getDefaultConfig, STORAGE_KEY } from "~config"
+import { DEFAULT_CONFIGURATION, STORAGE_KEY } from "~config"
 
 import { ConfigForm } from "./components/ConfigForm"
 import { Navigation } from "./components/Navigation"

@@ -39,7 +39,10 @@
       "https://*/*"
     ],
     "permissions": [
-      "storage"
+      "storage",
+      "declarativeNetRequest",
+      "declarativeNetRequestWithHostAccess",
+      "declarativeNetRequestFeedback"
     ]
   }
 }

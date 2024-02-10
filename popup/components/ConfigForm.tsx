@@ -43,6 +43,17 @@ export const ConfigForm = ({ config, onChange, remove }: ConfigFormProps) => {
     </div>
   )
 
+  const addEmptyRequestHeader = () => {
+    onChange(
+      produce(config, (draft) => {
+        if (!draft.requestHeaders) {
+          draft.requestHeaders = []
+        }
+        draft.requestHeaders.push(DEFAULT_REQUEST_HEADERS)
+      })
+    )
+  }
+
   const updateRequestHeadersSelect = (checked: boolean) => {
     onChange(
       produce(config, (draft) => {
@@ -76,13 +87,7 @@ export const ConfigForm = ({ config, onChange, remove }: ConfigFormProps) => {
             size="20"
             fill="#000"
             className="cursor-pointer"
-            onClick={() =>
-              onChange(
-                produce(config, (draft) => {
-                  draft.requestHeaders.push(DEFAULT_REQUEST_HEADERS)
-                })
-              )
-            }
+            onClick={() => addEmptyRequestHeader()}
           />
         </div>
         <div className="bg-gray-300 p-[8px]">
@@ -161,15 +166,7 @@ export const ConfigForm = ({ config, onChange, remove }: ConfigFormProps) => {
   const addOperateContent = renderOperationContent([
     {
       label: "Request header",
-      onClick: () =>
-        onChange(
-          produce(config, (draft) => {
-            if (!draft.requestHeaders) {
-              draft.requestHeaders = []
-            }
-            draft.requestHeaders.push(DEFAULT_REQUEST_HEADERS)
-          })
-        )
+      onClick: addEmptyRequestHeader
     }
   ])
 
