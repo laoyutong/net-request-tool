@@ -1,4 +1,4 @@
-import { useMount, useUpdateEffect } from "ahooks"
+import { useDebounce, useMount, useUpdateEffect } from "ahooks"
 import icon from "data-base64:~assets/icon.png"
 import React, { useState } from "react"
 
@@ -30,9 +30,11 @@ const Popup = () => {
     setConfiguration(content || DEFAULT_CONFIGURATION)
   })
 
+  const debouncedValue = useDebounce(configuration, { wait: 500 })
+
   useUpdateEffect(() => {
-    storage.set(STORAGE_KEY.configuration, configuration)
-  }, [configuration])
+    storage.set(STORAGE_KEY.configuration, debouncedValue)
+  }, [debouncedValue])
 
   const renderHeader = () => (
     <div className="flex items-center p-[8px] bg-gray-100">
