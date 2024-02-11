@@ -3,10 +3,15 @@ import { Input, Popover } from "antd"
 import { produce } from "immer"
 import React, { useState } from "react"
 
-import { DEFAULT_REQUEST_HEADERS, FORM_CONTAINER_ICON_PROPS } from "~config"
+import {
+  DEFAULT_REQUEST_HEADER,
+  DEFAULT_URL_FILTER,
+  FORM_CONTAINER_ICON_PROPS
+} from "~config"
 import { ConfigContent } from "~types"
 
 import { RequestHeadersForm } from "./components/RequestHeadersForm"
+import { RequestUrlFiltersForm } from "./components/RequestUrlFiltersForm"
 import { renderOperationContent } from "./config"
 
 interface ConfigFormProps {
@@ -36,7 +41,18 @@ export const ConfigForm = ({ config, onChange, remove }: ConfigFormProps) => {
         if (!draft.requestHeaders) {
           draft.requestHeaders = []
         }
-        draft.requestHeaders.push(DEFAULT_REQUEST_HEADERS)
+        draft.requestHeaders.push(DEFAULT_REQUEST_HEADER)
+      })
+    )
+  }
+
+  const addEmptyRequestUrlFilter = () => {
+    onChange(
+      produce(config, (draft) => {
+        if (!draft.requestUrlFilters) {
+          draft.requestUrlFilters = []
+        }
+        draft.requestUrlFilters.push(DEFAULT_URL_FILTER)
       })
     )
   }
@@ -46,6 +62,10 @@ export const ConfigForm = ({ config, onChange, remove }: ConfigFormProps) => {
       {
         label: "Request header",
         onClick: addEmptyRequestHeader
+      },
+      {
+        label: "Request URL filter",
+        onClick: addEmptyRequestUrlFilter
       }
     ])
 
@@ -100,9 +120,14 @@ export const ConfigForm = ({ config, onChange, remove }: ConfigFormProps) => {
   return (
     <div className="p-[12px]">
       {renderHeader()}
-      <div className="mt-[12px] flex flex-col gap-[12px]">
+      <div className="mt-[12px] flex flex-col gap-[12px] h-[300px] overflow-auto hide-scrollbar">
         <RequestHeadersForm
           add={addEmptyRequestHeader}
+          config={config}
+          onChange={onChange}
+        />
+        <RequestUrlFiltersForm
+          add={addEmptyRequestUrlFilter}
           config={config}
           onChange={onChange}
         />

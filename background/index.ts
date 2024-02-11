@@ -11,7 +11,11 @@ const state: { ruleIds: number[]; bigId: number; smallId: number } = {
   smallId: 1
 }
 
-const getRuleId = () => state.bigId++ * 100 + state.smallId++
+const getRuleId = () => {
+  const id = state.bigId++ * 100 + state.smallId++
+  state.ruleIds.push(id)
+  return id
+}
 
 const clear = async () => {
   await chrome.declarativeNetRequest.updateSessionRules({
@@ -32,27 +36,48 @@ const handle = async (configuration?: Configuration) => {
     return
   }
 
-  const ruleId = getRuleId()
-  state.ruleIds.push(ruleId)
+  const action = {
+    type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
+    requestHeaders: activeConfig.requestHeaders
+      .filter((item) => Object.values(item).every(Boolean))
+      .map((item) => ({
+        header: item.name,
+        value: item.value,
+        operation: chrome.declarativeNetRequest.HeaderOperation.SET
+      }))
+  }
 
-  chrome.declarativeNetRequest.updateSessionRules({
-    addRules: [
-      {
-        id: ruleId,
-        action: {
-          type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
-          requestHeaders: activeConfig.requestHeaders
-            .filter((item) => item.active)
-            .map((item) => ({
-              header: item.name,
-              value: item.value,
-              operation: chrome.declarativeNetRequest.HeaderOperation.SET
-            }))
-        },
-        condition: {}
-      }
-    ]
-  })
+  const activeRequestUrlFilters =
+    activeConfig.requestUrlFilters?.filter(
+      (item) => item.active && item.urlFilter
+    ) ?? []
+
+  if (activeRequestUrlFilters.length) {
+    chrome.declarativeNetRequest.updateSessionRules({
+      addRules: activeRequestUrlFilters.map((filterItem) => {
+        const ruleId = getRuleId()
+        return {
+          id: ruleId,
+          action,
+          condition: {
+            urlFilter: filterItem.urlFilter,
+            requestMethods: filterItem.methods
+          }
+        }
+      })
+    })
+  } else {
+    const ruleId = getRuleId()
+    chrome.declarativeNetRequest.updateSessionRules({
+      addRules: [
+        {
+          id: ruleId,
+          action,
+          condition: {}
+        }
+      ]
+    })
+  }
 }
 
 const watch = () => {

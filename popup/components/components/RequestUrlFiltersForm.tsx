@@ -1,14 +1,13 @@
 import { Copy, DeleteOne } from "@icon-park/react"
-import { Checkbox, Input } from "antd"
-import cls from "classnames"
+import { Checkbox, Input, Select } from "antd"
 import { produce } from "immer"
 import React from "react"
 
-import { FORM_ITEM_ICON_PROPS } from "~config"
+import { FORM_ITEM_ICON_PROPS, REQUEST_METHOD_LIST } from "~config"
 
 import { FormComponentProps, renderFormHeader } from "../config"
 
-export const RequestHeadersForm = ({
+export const RequestUrlFiltersForm = ({
   config,
   onChange,
   add
@@ -16,7 +15,7 @@ export const RequestHeadersForm = ({
   const onHeaderSelectChange = (checked: boolean) => {
     onChange(
       produce(config, (draft) => {
-        draft.requestHeaders = draft.requestHeaders.map((item) => ({
+        draft.requestUrlFilters = draft.requestUrlFilters.map((item) => ({
           ...item,
           active: checked
         }))
@@ -24,27 +23,27 @@ export const RequestHeadersForm = ({
     )
   }
 
-  if (!config?.requestHeaders?.length) {
+  if (!config?.requestUrlFilters?.length) {
     return null
   }
 
   return (
     <div className="form-container">
       {renderFormHeader(
-        "Request header",
-        config.requestHeaders,
+        "Request URL filters",
+        config.requestUrlFilters,
         add,
         onHeaderSelectChange
       )}
       <div className="form-sub-container">
-        {config.requestHeaders.map((item, index) => (
+        {config.requestUrlFilters.map((item, index) => (
           <div className="flex items-center">
             <Checkbox
               checked={item.active}
               onChange={(e) =>
                 onChange(
                   produce(config, (draft) => {
-                    draft.requestHeaders[index].active = e.target.checked
+                    draft.requestUrlFilters[index].active = e.target.checked
                   })
                 )
               }
@@ -52,24 +51,34 @@ export const RequestHeadersForm = ({
             <div className="form-item-wrapper">
               <Input
                 size="small"
-                placeholder="name"
-                value={item.name}
+                placeholder=".*://.*.google.com/.*"
+                value={item.urlFilter}
                 onChange={(e) =>
                   onChange(
                     produce(config, (draft) => {
-                      draft.requestHeaders[index].name = e.target.value
+                      draft.requestUrlFilters[index].urlFilter = e.target.value
                     })
                   )
                 }
               />
-              <Input
-                placeholder="value"
+              <Select
+                style={{ minWidth: "50%" }}
                 size="small"
-                value={item.value}
-                onChange={(e) =>
+                mode="multiple"
+                allowClear
+                maxTagCount="responsive"
+                placeholder="All methods"
+                options={REQUEST_METHOD_LIST.map((item) => ({
+                  label: item,
+                  value: item
+                }))}
+                value={item.methods}
+                onChange={(v) =>
                   onChange(
                     produce(config, (draft) => {
-                      draft.requestHeaders[index].value = e.target.value
+                      draft.requestUrlFilters[index].methods = v?.length
+                        ? v
+                        : undefined
                     })
                   )
                 }
@@ -79,7 +88,7 @@ export const RequestHeadersForm = ({
                 onClick={() =>
                   onChange(
                     produce(config, (draft) => {
-                      draft.requestHeaders.splice(index, 1)
+                      draft.requestUrlFilters.splice(index, 1)
                     })
                   )
                 }
@@ -89,7 +98,7 @@ export const RequestHeadersForm = ({
                 onClick={() =>
                   onChange(
                     produce(config, (draft) => {
-                      draft.requestHeaders.push(item)
+                      draft.requestUrlFilters.push(item)
                     })
                   )
                 }

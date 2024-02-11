@@ -18,3 +18,21 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+@layer components {
+  .form-container {
+    @apply rounded-sm border border-gray-200 border-solid;
+  }
+
+  .form-sub-container {
+    @apply bg-gray-300 p-[8px];
+  }
+
+  .form-sub-container > :not(:first-child) {
+    margin-top: 8px;
+  }
+
+  .form-item-wrapper {
+    @apply w-full flex items-center gap-[4px] ml-[4px];
+  }
+}
