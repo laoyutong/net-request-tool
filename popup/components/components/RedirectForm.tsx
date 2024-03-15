@@ -1,21 +1,17 @@
 import { Copy, DeleteOne } from "@icon-park/react"
-import { Checkbox, Input, Select } from "antd"
+import { Checkbox, Input } from "antd"
 import { produce } from "immer"
 import React from "react"
 
-import { FORM_ITEM_ICON_PROPS, REQUEST_METHOD_LIST } from "~config"
+import { FORM_ITEM_ICON_PROPS } from "~config"
 
 import { renderFormHeader, type FormComponentProps } from "../config"
 
-export const RequestUrlFiltersForm = ({
-  config,
-  onChange,
-  add
-}: FormComponentProps) => {
+export const RedirectForm = ({ config, onChange, add }: FormComponentProps) => {
   const onHeaderSelectChange = (checked: boolean) => {
     onChange(
       produce(config, (draft) => {
-        draft.requestUrlFilters = draft.requestUrlFilters.map((item) => ({
+        draft.redirects = draft.redirects.map((item) => ({
           ...item,
           active: checked
         }))
@@ -23,27 +19,27 @@ export const RequestUrlFiltersForm = ({
     )
   }
 
-  if (!config?.requestUrlFilters?.length) {
+  if (!config?.redirects?.length) {
     return null
   }
 
   return (
     <div className="form-container">
       {renderFormHeader(
-        "Request URL filters",
-        config.requestUrlFilters,
+        "Redirect",
+        config.redirects,
         add,
         onHeaderSelectChange
       )}
       <div className="form-sub-container">
-        {config.requestUrlFilters.map((item, index) => (
+        {config.redirects.map((item, index) => (
           <div className="flex items-center">
             <Checkbox
               checked={item.active}
               onChange={(e) =>
                 onChange(
                   produce(config, (draft) => {
-                    draft.requestUrlFilters[index].active = e.target.checked
+                    draft.redirects[index].active = e.target.checked
                   })
                 )
               }
@@ -51,34 +47,24 @@ export const RequestUrlFiltersForm = ({
             <div className="form-item-wrapper">
               <Input
                 size="small"
-                placeholder=".*://.*.google.com/.*"
-                value={item.urlFilter}
+                placeholder="from"
+                value={item.from}
                 onChange={(e) =>
                   onChange(
                     produce(config, (draft) => {
-                      draft.requestUrlFilters[index].urlFilter = e.target.value
+                      draft.redirects[index].from = e.target.value
                     })
                   )
                 }
               />
-              <Select
-                style={{ minWidth: "50%" }}
+              <Input
+                placeholder="to"
                 size="small"
-                mode="multiple"
-                allowClear
-                maxTagCount="responsive"
-                placeholder="All methods"
-                options={REQUEST_METHOD_LIST.map((item) => ({
-                  label: item,
-                  value: item
-                }))}
-                value={item.methods}
-                onChange={(v) =>
+                value={item.to}
+                onChange={(e) =>
                   onChange(
                     produce(config, (draft) => {
-                      draft.requestUrlFilters[index].methods = v?.length
-                        ? v
-                        : undefined
+                      draft.redirects[index].to = e.target.value
                     })
                   )
                 }
@@ -88,7 +74,7 @@ export const RequestUrlFiltersForm = ({
                 onClick={() =>
                   onChange(
                     produce(config, (draft) => {
-                      draft.requestUrlFilters.splice(index, 1)
+                      draft.redirects.splice(index, 1)
                     })
                   )
                 }
@@ -98,7 +84,7 @@ export const RequestUrlFiltersForm = ({
                 onClick={() =>
                   onChange(
                     produce(config, (draft) => {
-                      draft.requestUrlFilters.push(item)
+                      draft.redirects.push(item)
                     })
                   )
                 }

@@ -1,12 +1,11 @@
 import { Copy, DeleteOne } from "@icon-park/react"
 import { Checkbox, Input } from "antd"
-import cls from "classnames"
 import { produce } from "immer"
 import React from "react"
 
 import { FORM_ITEM_ICON_PROPS } from "~config"
 
-import { FormComponentProps, renderFormHeader } from "../config"
+import { renderFormHeader, type FormComponentProps } from "../config"
 
 export const RequestHeadersForm = ({
   config,

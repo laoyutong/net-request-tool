@@ -1,7 +1,7 @@
 import { Storage } from "@plasmohq/storage"
 
 import { STORAGE_KEY } from "~config"
-import { Configuration } from "~types"
+import type { Configuration } from "~types"
 
 const storage = new Storage()
 

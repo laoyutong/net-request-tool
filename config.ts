@@ -1,6 +1,6 @@
-import { IIconProps } from "@icon-park/react/lib/runtime"
+import type { IIconProps } from "@icon-park/react/lib/runtime"
 
-import { Configuration, RequestUrlFilters } from "~types"
+import type { Configuration, Redirect, RequestUrlFilters } from "~types"
 
 export const STORAGE_KEY = {
   configuration: "configuration"
@@ -28,12 +28,17 @@ export const DEFAULT_URL_FILTER: RequestUrlFilters = {
   active: true
 }
 
+export const DEFAULT_REDIRECT: Redirect = {
+  from: "",
+  to: "",
+  active: true
+}
+
 export const getDefaultConfig = (
   index: number
 ): Configuration["configs"][number] => ({
   name: `${index}-Profile`,
-  requestHeaders: [DEFAULT_REQUEST_HEADER],
-  requestUrlFilters: [DEFAULT_URL_FILTER]
+  requestHeaders: [DEFAULT_REQUEST_HEADER]
 })
 
 export const DEFAULT_CONFIGURATION: Configuration = {

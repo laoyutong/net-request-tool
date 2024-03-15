@@ -3,7 +3,7 @@ import { Button, Checkbox } from "antd"
 import React from "react"
 
 import { FORM_HEADER_ICON_PROPS } from "~config"
-import { ConfigContent } from "~types"
+import type { ConfigContent } from "~types"
 
 export interface FormComponentProps {
   config: ConfigContent

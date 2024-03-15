@@ -6,7 +6,7 @@ import "@icon-park/react/styles/index.css"
 
 import { Storage } from "@plasmohq/storage"
 
-import { ConfigContent, Configuration } from "~types"
+import type { ConfigContent, Configuration } from "~types"
 
 import "./style.css"
 

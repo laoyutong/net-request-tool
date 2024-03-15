@@ -4,12 +4,14 @@ import { produce } from "immer"
 import React, { useState } from "react"
 
 import {
+  DEFAULT_REDIRECT,
   DEFAULT_REQUEST_HEADER,
   DEFAULT_URL_FILTER,
   FORM_CONTAINER_ICON_PROPS
 } from "~config"
-import { ConfigContent } from "~types"
+import type { ConfigContent } from "~types"
 
+import { RedirectForm } from "./components/RedirectForm"
 import { RequestHeadersForm } from "./components/RequestHeadersForm"
 import { RequestUrlFiltersForm } from "./components/RequestUrlFiltersForm"
 import { renderOperationContent } from "./config"
@@ -35,7 +37,7 @@ export const ConfigForm = ({ config, onChange, remove }: ConfigFormProps) => {
     setIsEditingName(false)
   }
 
-  const addEmptyRequestHeader = () => {
+  const addRequestHeader = () => {
     onChange(
       produce(config, (draft) => {
         if (!draft.requestHeaders) {
@@ -46,7 +48,7 @@ export const ConfigForm = ({ config, onChange, remove }: ConfigFormProps) => {
     )
   }
 
-  const addEmptyRequestUrlFilter = () => {
+  const addRequestUrlFilter = () => {
     onChange(
       produce(config, (draft) => {
         if (!draft.requestUrlFilters) {
@@ -57,15 +59,30 @@ export const ConfigForm = ({ config, onChange, remove }: ConfigFormProps) => {
     )
   }
 
+  const addRedirect = () => {
+    onChange(
+      produce(config, (draft) => {
+        if (!draft.redirects) {
+          draft.redirects = []
+        }
+        draft.redirects.push(DEFAULT_REDIRECT)
+      })
+    )
+  }
+
   const renderHeader = () => {
     const addOperateContent = renderOperationContent([
       {
         label: "Request header",
-        onClick: addEmptyRequestHeader
+        onClick: addRequestHeader
       },
       {
         label: "Request URL filter",
-        onClick: addEmptyRequestUrlFilter
+        onClick: addRequestUrlFilter
+      },
+      {
+        label: "Redirect",
+        onClick: addRedirect
       }
     ])
 
@@ -122,12 +139,13 @@ export const ConfigForm = ({ config, onChange, remove }: ConfigFormProps) => {
       {renderHeader()}
       <div className="mt-[12px] flex flex-col gap-[12px] h-[300px] overflow-auto hide-scrollbar">
         <RequestHeadersForm
-          add={addEmptyRequestHeader}
+          add={addRequestHeader}
           config={config}
           onChange={onChange}
         />
+        <RedirectForm add={addRedirect} config={config} onChange={onChange} />
         <RequestUrlFiltersForm
-          add={addEmptyRequestUrlFilter}
+          add={addRequestUrlFilter}
           config={config}
           onChange={onChange}
         />
