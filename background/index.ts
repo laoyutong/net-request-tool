@@ -32,52 +32,77 @@ const handle = async (configuration?: Configuration) => {
   }
 
   const activeConfig = configuration.configs[configuration.configIdx]
-  if (!activeConfig?.requestHeaders?.length) {
+  if (
+    !activeConfig?.requestHeaders?.length &&
+    !activeConfig?.redirects?.length
+  ) {
     return
   }
 
-  const action = {
-    type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
-    requestHeaders: activeConfig.requestHeaders
-      .filter((item) => Object.values(item).every(Boolean))
-      .map((item) => ({
+  const rules: chrome.declarativeNetRequest.Rule[] = []
+
+  const activeRequestHeaders = activeConfig.requestHeaders?.filter((item) =>
+    Object.values(item).every(Boolean)
+  )
+
+  if (activeRequestHeaders.length) {
+    const action = {
+      type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
+      requestHeaders: activeRequestHeaders.map((item) => ({
         header: item.name,
         value: item.value,
         operation: chrome.declarativeNetRequest.HeaderOperation.SET
       }))
-  }
+    }
 
-  const activeRequestUrlFilters =
-    activeConfig.requestUrlFilters?.filter(
-      (item) => item.active && item.urlFilter
-    ) ?? []
+    const activeRequestUrlFilters = activeConfig.requestUrlFilters?.filter(
+      (item) => Object.values(item).every(Boolean)
+    )
 
-  if (activeRequestUrlFilters.length) {
-    chrome.declarativeNetRequest.updateSessionRules({
-      addRules: activeRequestUrlFilters.map((filterItem) => {
-        const ruleId = getRuleId()
-        return {
-          id: ruleId,
+    if (activeRequestUrlFilters?.length) {
+      rules.push(
+        ...activeRequestUrlFilters.map((filterItem) => ({
+          id: getRuleId(),
           action,
           condition: {
             urlFilter: filterItem.urlFilter,
             requestMethods: filterItem.methods
           }
-        }
+        }))
+      )
+    } else {
+      rules.push({
+        id: getRuleId(),
+        action,
+        condition: {}
       })
-    })
-  } else {
-    const ruleId = getRuleId()
-    chrome.declarativeNetRequest.updateSessionRules({
-      addRules: [
-        {
-          id: ruleId,
-          action,
-          condition: {}
-        }
-      ]
-    })
+    }
   }
+
+  const activeRedirect = activeConfig.redirects?.filter((item) =>
+    Object.values(item).every(Boolean)
+  )
+
+  if (activeRedirect?.length) {
+    rules.push(
+      ...activeRedirect.map((item) => ({
+        id: getRuleId(),
+        action: {
+          type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
+          redirect: {
+            regexSubstitution: item.to
+          }
+        },
+        condition: {
+          regexFilter: `^${item.from.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")}$`
+        }
+      }))
+    )
+  }
+
+  chrome.declarativeNetRequest.updateSessionRules({
+    addRules: rules
+  })
 }
 
 const watch = () => {
